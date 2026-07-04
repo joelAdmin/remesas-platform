@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\CloudinaryStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class ReceiptUploadController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected CloudinaryStorageService $uploadService,
+    ) {
         $this->middleware('permission:remittances.edit')->only(['store']);
     }
 
@@ -23,11 +23,10 @@ class ReceiptUploadController extends Controller
         ])->validate();
 
         $file = $validated['file'];
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('receipts', $filename, 'public');
+        $result = $this->uploadService->store($file);
 
         return response()->json([
-            'url' => '/storage/' . $path,
+            'url' => $result['url'],
         ], 201);
     }
 }
