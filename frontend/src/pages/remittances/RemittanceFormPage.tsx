@@ -30,6 +30,7 @@ interface FormData {
   sell_rate: number
   tasa_publico: number
   notes: string
+  registered_at: string
   status: string
   origin_receipt: string | null
   destination_receipt: string | null
@@ -78,7 +79,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
   const isEditLoading = useRef(false)
 
   const { register, handleSubmit, reset, setValue, watch, control, setError, formState: { errors, isSubmitting } } = useForm<FormData>({
-    defaultValues: { status: 'pending', origin_receipt: null, destination_receipt: null, client_account_id: null },
+    defaultValues: { status: 'pending', registered_at: new Date().toISOString().split('T')[0], origin_receipt: null, destination_receipt: null, client_account_id: null },
   })
 
   const originAmount = watch('origin_amount')
@@ -206,6 +207,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
             ? parseFloat((isMultiply ? dn / parseFloat(d.origin_amount) : parseFloat(d.origin_amount) / dn).toFixed(2))
             : 0,
           notes: d.notes || '',
+          registered_at: d.registered_at || new Date().toISOString().split('T')[0],
           status: d.status,
           origin_receipt: d.origin_receipt,
           destination_receipt: d.destination_receipt,
@@ -410,6 +412,10 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
 
         <FormField label={t('remittance.notes')} error={errors.notes?.message}>
           <textarea {...register('notes')} rows={2} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" aria-invalid={!!errors.notes} />
+        </FormField>
+
+        <FormField label={t('remittance.registered_at')} error={errors.registered_at?.message}>
+          <input type="date" {...register('registered_at', { required: t('remittance.registered_at') })} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" aria-invalid={!!errors.registered_at} />
         </FormField>
 
         <div className="border-t border-gray-100 pt-4">

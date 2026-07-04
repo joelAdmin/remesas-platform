@@ -50,6 +50,7 @@ class RemittanceResource extends JsonResource
             'status' => $this->status,
             'process_steps' => $this->process_steps,
             'notes' => $this->notes,
+            'registered_at' => $this->registered_at?->toDateString(),
             'origin_receipt' => $this->origin_receipt,
             'destination_receipt' => $this->destination_receipt,
             'origin_receipt_url' => $this->origin_receipt_url,

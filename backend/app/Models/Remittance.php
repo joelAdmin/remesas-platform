@@ -18,6 +18,7 @@ class Remittance extends Model
         'usdt_to_sell', 'profit_usdt',
         'total_profit_usd', 'has_responsible_assignment', 'total_assigned_percent', 'work_cycle_id',
         'status', 'process_steps', 'notes',
+        'registered_at',
         'origin_receipt', 'destination_receipt',
     ];
 
@@ -26,6 +27,7 @@ class Remittance extends Model
         return [
             'has_responsible_assignment' => 'boolean',
             'process_steps' => 'array',
+            'registered_at' => 'date',
         ];
     }
 

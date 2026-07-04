@@ -106,6 +106,7 @@ export interface Remittance {
   status: string
   process_steps: string[] | null
   notes: string | null
+  registered_at: string | null
   origin_receipt: string | null
   destination_receipt: string | null
   origin_receipt_url: string | null

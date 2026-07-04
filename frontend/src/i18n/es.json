@@ -115,6 +115,7 @@
     "destination_currency": "Moneda Destino",
     "usdt_sell_rate": "Tasa Venta USDT",
     "confirm_calculation": "Verificación",
+    "registered_at": "Fecha de Registro",
     "calculate": "Calcular",
     "notes": "Notas",
     "origin_receipt": "Comprobante Origen",

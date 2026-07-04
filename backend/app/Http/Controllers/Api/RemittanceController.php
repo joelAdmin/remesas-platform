@@ -71,6 +71,7 @@ class RemittanceController extends Controller
 
         $data = array_merge($data, $calculated);
         $data['status'] ??= 'pending';
+        $data['registered_at'] ??= now()->toDateString();
 
         $remittance = $this->remittanceRepository->create(
             collect($data)->except(['tasa_publico', 'promoters'])->toArray()
@@ -182,8 +183,8 @@ class RemittanceController extends Controller
         $query = \App\Models\RemittancePromoter::query()
             ->selectRaw('user_id, SUM(profit_percent) as total_percent, COUNT(*) as remittance_count')
             ->whereHas('remittance', function ($q) use ($request) {
-                $q->whereYear('created_at', $request->year)
-                  ->whereMonth('created_at', $request->month);
+                $q->whereYear('registered_at', $request->year)
+                  ->whereMonth('registered_at', $request->month);
             });
 
         if ($request->filled('user_id')) {
@@ -192,8 +193,8 @@ class RemittanceController extends Controller
 
         $promoters = $query->groupBy('user_id')->with('user')->get();
 
-        $remittances = \App\Models\Remittance::whereYear('created_at', $request->year)
-            ->whereMonth('created_at', $request->month)
+        $remittances = \App\Models\Remittance::whereYear('registered_at', $request->year)
+            ->whereMonth('registered_at', $request->month)
             ->get();
 
         $earnings = $promoters->map(function ($p) use ($remittances) {

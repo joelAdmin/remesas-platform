@@ -83,6 +83,7 @@ export default function RemittanceListPage() {
           { key: 'usdt_to_sell', label: t('remittance.usdt_to_sell'), render: (item) => fmt(item.usdt_to_sell) },
           { key: 'destination_net_amount', label: t('remittance.destination_net'), render: (item) => fmt(item.destination_net_amount) },
           { key: 'total_profit_usd', label: t('remittance.total_profit'), render: (item) => fmt(item.total_profit_usd) },
+          { key: 'registered_at', label: t('remittance.registered_at') },
           { key: 'status', label: t('common.status') },
         ]}
         data={data}
@@ -227,7 +228,7 @@ function RemittanceViewDetail({ item, t, statusColors }: { item: Remittance; t: 
       )}
 
       <div className="flex gap-4 text-xs text-gray-400">
-        <span className="flex items-center gap-1"><Calendar size= {12} />{item.created_at ? new Date(item.created_at).toLocaleString() : '-'}</span>
+        <span className="flex items-center gap-1"><Calendar size={12} />{t('remittance.registered_at')}: {item.registered_at ?? (item.created_at ? new Date(item.created_at).toLocaleDateString() : '-')}</span>
         <span className="flex items-center gap-1"><Clock size={12} />Actualizado: {item.updated_at ? new Date(item.updated_at).toLocaleString() : '-'}</span>
       </div>
     </div>

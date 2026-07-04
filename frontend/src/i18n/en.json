@@ -115,6 +115,7 @@
     "destination_currency": "Dest. Currency",
     "usdt_sell_rate": "USDT Sell Rate",
     "confirm_calculation": "Verification",
+    "registered_at": "Registration Date",
     "calculate": "Calculate",
     "notes": "Notes",
     "origin_receipt": "Origin Receipt",

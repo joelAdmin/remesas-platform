@@ -26,6 +26,7 @@ class StoreRemittanceRequest extends FormRequest
             'status' => 'nullable|string|max:50',
             'process_steps' => 'nullable|array',
             'notes' => 'nullable|string',
+            'registered_at' => 'nullable|date',
             'origin_receipt' => 'nullable|string',
             'destination_receipt' => 'nullable|string',
             'promoters' => 'nullable|array',
