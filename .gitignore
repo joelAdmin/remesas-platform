@@ -9,5 +9,7 @@
 /scripts/
 .env
 .env.local
+.env.prod
 *.log
 .DS_Store
+DEPLOYMENT.md
