@@ -1,0 +1,97 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: remesas-app
+    container_name: remesas_backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+    networks:
+      - remesas
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    image: node:20-alpine
+    container_name: remesas_frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    networks:
+      - remesas
+    depends_on:
+      - backend
+
+  webserver:
+    image: nginx:latest
+    container_name: remesas_nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - remesas
+
+  db:
+    image: mysql:8.0
+    container_name: remesas_db
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-3307}:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - remesas
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: remesas_pma
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${PHPMA_PORT:-8081}:80"
+    networks:
+      - remesas
+    depends_on:
+      - db
+
+  redis:
+    image: redis:alpine
+    container_name: remesas_redis
+    restart: unless-stopped
+    networks:
+      - remesas
+
+networks:
+  remesas:
+    driver: bridge
+
+volumes:
+  dbdata:
