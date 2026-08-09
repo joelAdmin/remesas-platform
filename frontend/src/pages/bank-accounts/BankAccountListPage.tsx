@@ -80,11 +80,14 @@ export default function BankAccountListPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editItem) return
+    if (!form.currency_id) {
+      toast.error('La moneda es obligatoria')
+      return
+    }
     setSaving(true)
     try {
       const payload = { ...form }
       if (!payload.country_id) delete payload.country_id
-      if (!payload.currency_id) delete payload.currency_id
       if (tab === 'client') {
         await clientAccountRepository.update(editItem.id, payload)
       } else {

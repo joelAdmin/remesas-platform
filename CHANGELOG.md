@@ -1,5 +1,23 @@
 # Changelog — Remesas Casa de Cambio
 
+## Sesión 2026-08-07
+
+### Corrección: select de cuentas destino/origen en remesas
+- **`frontend/src/pages/remittances/RemittanceFormPage.tsx`** — `InlineCreateModal` de cuenta destino y origen hereda la moneda del corredor (`currency_id` hidden); `onCreated` recarga las cuentas aplicando el filtro de moneda del corredor para evitar mezclar cuentas de monedas incompatibles.
+- **`backend/app/Http/Controllers/Api/ClientAccountController.php`** — `currency_id` ahora es `required` en `store` y `update`.
+- **`backend/app/Http/Controllers/Api/SourceAccountController.php`** — `currency_id` ahora es `required` en `store` y `update`.
+- **`frontend/src/pages/clients/ClientFormPage.tsx`** — `currency_id` marcado como requerido en `accountFields`; `handleSaveEdit` valida la moneda antes de enviar.
+- **`frontend/src/pages/bank-accounts/BankAccountListPage.tsx`** — `handleSave` valida que `currency_id` esté presente antes de actualizar.
+- **`specs/2026-08-07-remittances-cuentas-destino-no-cargan.md`** — Spec formal del bug siguiendo Spec-Driven Development.
+
+### Limpieza de errores TypeScript pre-existentes
+- **`frontend/src/pages/DashboardPage.tsx`** — Eliminadas importación y constante sin uso (`Badge`, `statusColors`).
+- **`frontend/src/pages/remittances/RemittanceFormPage.tsx`** — Agregado `tasa_formula` al estado de cálculo en edición; correcciones de tipado en actualización de promotores.
+- **`frontend/src/pages/remittances/RemittanceListPage.tsx`** — Removida prop `dismissable` inexistente en `Modal`; usado optional chaining en listado de promotores.
+- **`frontend/src/pages/reports/ReportsPage.tsx`** — Eliminadas variables e importaciones sin uso (`t`, `setSearchParams`, `confirm`, `token`).
+
+---
+
 ## Sesión 2026-06-24
 
 ### 1. Rediseño Login Page

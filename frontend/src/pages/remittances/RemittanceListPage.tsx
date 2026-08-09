@@ -101,7 +101,7 @@ export default function RemittanceListPage() {
         {viewItem && <RemittanceViewDetail item={viewItem} t={t} statusColors={statusColors} />}
       </Modal>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={t(editId ? 'remittance.edit' : 'remittance.create')} size="xl" dismissable={false}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={t(editId ? 'remittance.edit' : 'remittance.create')} size="xl">
         <ErrorBoundary>
           <RemittanceFormPage
             showHeader={false}
@@ -188,7 +188,7 @@ function RemittanceViewDetail({ item, t, statusColors }: { item: Remittance; t: 
         <div className="text-sm">
           <p className="text-xs text-gray-500 font-medium mb-2">{t('remittance.promoters')}</p>
           <div className="space-y-1">
-            {item.promoters.map((p: any) => (
+            {(item.promoters ?? []).map((p: any) => (
               <div key={p.user_id} className="flex justify-between bg-gray-50 rounded-lg px-3 py-1.5 text-xs">
                 <span className="text-gray-700">{p.user?.name ?? `#${p.user_id}`}</span>
                 <span className="font-medium text-gray-900">{p.profit_percent}%</span>

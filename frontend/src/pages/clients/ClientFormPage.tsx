@@ -80,7 +80,7 @@ export default function ClientFormPage({ clientId: propClientId, onSuccess, show
         if (currency) setField('currency_id', currency.id)
       }
     },
-    { name: 'currency_id', label: t('client.currency'), type: 'select', optionsEndpoint: '/currencies', optionsLabelKey: 'name', optionsValueKey: 'id' },
+    { name: 'currency_id', label: t('client.currency'), type: 'select', optionsEndpoint: '/currencies', optionsLabelKey: 'name', optionsValueKey: 'id', required: true },
     { name: 'account_holder', label: t('client.account_holder'), required: true },
     { name: 'bank_name', label: t('client.bank_name') },
     { name: 'account_number', label: t('client.account_number'), required: true },
@@ -143,10 +143,13 @@ export default function ClientFormPage({ clientId: propClientId, onSuccess, show
 
   const handleSaveEdit = async () => {
     if (!editAccount) return
+    if (!editForm.currency_id) {
+      toast.error('La moneda es obligatoria')
+      return
+    }
     try {
       const payload = { ...editForm }
       if (!payload.country_id) delete payload.country_id
-      if (!payload.currency_id) delete payload.currency_id
       await clientAccountRepository.update(editAccount.id, payload)
       toast.success('Cuenta actualizada exitosamente')
       setEditAccount(null)

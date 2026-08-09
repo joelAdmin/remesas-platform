@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { BarChart3, Download, TrendingUp, Users, UserCheck, Send } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
@@ -79,9 +78,8 @@ const statusLabels: Record<string, string> = {
 type Tab = 'summary' | 'profit' | 'promoters' | 'responsibles' | 'remittances'
 
 export default function ReportsPage() {
-  const { t } = useTranslation()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const [searchParams] = useSearchParams()
+  const { ConfirmDialog } = useConfirm()
 
   const [activeTab, setActiveTab] = useState<Tab>('summary')
   const [workCycles, setWorkCycles] = useState<WorkCycle[]>([])
@@ -159,7 +157,6 @@ export default function ReportsPage() {
   }
 
   const handleExport = async (type: string) => {
-    const token = localStorage.getItem('token')
     const query = buildQuery()
     window.open(`/api/reports/${type}/export?${query}`, '_blank')
   }

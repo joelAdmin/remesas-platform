@@ -35,7 +35,7 @@ class ClientAccountController extends Controller
         $validated = Validator::make($request->all(), [
             'client_id' => 'required|exists:clients,id',
             'country_id' => 'nullable|exists:countries,id',
-            'currency_id' => 'nullable|exists:currencies,id',
+            'currency_id' => 'required|exists:currencies,id',
             'account_holder' => 'required|string|max:255',
             'bank_name' => 'nullable|string|max:255',
             'account_number' => 'required|string|max:100',
@@ -65,7 +65,7 @@ class ClientAccountController extends Controller
 
         $validated = Validator::make($request->all(), [
             'country_id' => 'nullable|exists:countries,id',
-            'currency_id' => 'nullable|exists:currencies,id',
+            'currency_id' => 'required|exists:currencies,id',
             'account_holder' => 'nullable|string|max:255',
             'bank_name' => 'nullable|string|max:255',
             'account_number' => 'nullable|string|max:100',

@@ -228,6 +228,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
           usdt_to_sell: parseFloat(d.usdt_to_sell ?? 0),
           profit_usdt: parseFloat(d.profit_usdt ?? 0),
           total_profit_usd: parseFloat(d.total_profit_usd),
+          tasa_formula: (d.exchange_corridor?.tasa_formula ?? 'divide') as 'divide' | 'multiply',
         })
       }).catch((err) => {
         console.error('Error loading remittance for edit:', err)
@@ -327,16 +328,8 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                 triggerClass="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl border border-dashed border-blue-200 transition-colors"
                 fields={[
                   { name: 'client_id', label: 'Client ID', type: 'hidden', defaultValue: selectedClientId },
-                  { name: 'country_id', label: 'Country', type: 'select', optionsEndpoint: '/countries', optionsLabelKey: 'name', optionsValueKey: 'id',
-                    onFieldChange: (value, setField, raw) => {
-                      if (!value) return
-                      const country = raw['country_id']?.find((c: any) => c.id === Number(value))
-                      if (!country?.currency_code) return
-                      const currency = raw['currency_id']?.find((c: any) => c.code === country.currency_code)
-                      if (currency) setField('currency_id', currency.id)
-                    }
-                  },
-                  { name: 'currency_id', label: 'Currency', type: 'select', optionsEndpoint: '/currencies', optionsLabelKey: 'name', optionsValueKey: 'id' },
+                  { name: 'country_id', label: 'Country', type: 'select', optionsEndpoint: '/countries', optionsLabelKey: 'name', optionsValueKey: 'id' },
+                  { name: 'currency_id', label: 'Currency', type: 'hidden', defaultValue: selectedCorridor?.destination_currency_id },
                   { name: 'account_holder', label: 'Account Holder', required: true },
                   { name: 'bank_name', label: 'Bank Name' },
                   { name: 'account_number', label: 'Account Number', required: true },
@@ -345,7 +338,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                 onCreated={(item) => {
                   setClientAccounts(prev => [item, ...prev])
                   setValue('client_account_id', item.id)
-                  if (selectedClientId) loadClientAccounts(selectedClientId)
+                  if (selectedClientId) loadClientAccounts(selectedClientId, selectedCorridor?.destination_currency_id)
                 }}
               />
             </div>
@@ -361,16 +354,8 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                 title="Add Source Account"
                 triggerClass="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl border border-dashed border-blue-200 transition-colors"
                 fields={[
-                  { name: 'country_id', label: 'Country', type: 'select', optionsEndpoint: '/countries', optionsLabelKey: 'name', optionsValueKey: 'id',
-                    onFieldChange: (value, setField, raw) => {
-                      if (!value) return
-                      const country = raw['country_id']?.find((c: any) => c.id === Number(value))
-                      if (!country?.currency_code) return
-                      const currency = raw['currency_id']?.find((c: any) => c.code === country.currency_code)
-                      if (currency) setField('currency_id', currency.id)
-                    }
-                  },
-                  { name: 'currency_id', label: 'Currency', type: 'select', optionsEndpoint: '/currencies', optionsLabelKey: 'name', optionsValueKey: 'id' },
+                  { name: 'country_id', label: 'Country', type: 'select', optionsEndpoint: '/countries', optionsLabelKey: 'name', optionsValueKey: 'id' },
+                  { name: 'currency_id', label: 'Currency', type: 'hidden', defaultValue: selectedCorridor?.origin_currency_id },
                   { name: 'account_holder', label: 'Account Holder', required: true },
                   { name: 'bank_name', label: 'Bank Name' },
                   { name: 'account_number', label: 'Account Number', required: true },
@@ -379,7 +364,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                 onCreated={(item) => {
                   setSourceAccounts(prev => [item, ...prev])
                   setValue('source_account_id', item.id)
-                  loadSourceAccounts()
+                  loadSourceAccounts(selectedCorridor?.origin_currency_id)
                 }}
               />
             </div>
@@ -436,7 +421,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                     <label className="block text-xs text-gray-500 mb-1">{t('remittance.promoter_user')}</label>
                     <select value={p.user_id} onChange={(e) => {
                       const newPromoters = [...promoters]
-                      newPromoters[idx] = { ...newPromoters[idx], user_id: parseInt(e.target.value) }
+                      newPromoters[idx] = { ...newPromoters[idx], user_id: parseInt(e.target.value) } as { user_id: number; profit_percent: number }
                       setPromoters(newPromoters)
                     }} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                       <option value="0">{t('common.select')}</option>
@@ -450,7 +435,7 @@ export default function RemittanceFormPage({ onSuccess, showHeader = true, editI
                             <NumberInput value={p.profit_percent} decimals={2}
                       onChange={(val) => {
                         const newPromoters = [...promoters]
-                        newPromoters[idx] = { ...newPromoters[idx], profit_percent: val ?? 0 }
+                        newPromoters[idx] = { ...newPromoters[idx], profit_percent: val ?? 0 } as { user_id: number; profit_percent: number }
                         setPromoters(newPromoters)
                       }}
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none" />

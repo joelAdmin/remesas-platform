@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Send, Users, DollarSign, Activity, TrendingUp, Calendar } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Badge } from '../components/ui/badge'
 import api from '../services/api'
 import { fmt } from '../lib/utils'
 import {
@@ -23,13 +22,6 @@ interface DashboardData {
   profit_last_7_days: { date: string; profit: number }[]
   remittances_last_7_days: { date: string; count: number }[]
   recent_remittances: { id: number; ref_ve: string; client_name: string; origin_amount: number; status: string; created_at: string }[]
-}
-
-const statusColors: Record<string, string> = {
-  pending: '#eab308',
-  in_process: '#3b82f6',
-  completed: '#10b981',
-  cancelled: '#ef4444',
 }
 
 const statusBadgeColors: Record<string, string> = {
